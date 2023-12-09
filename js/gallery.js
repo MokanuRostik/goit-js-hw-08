@@ -64,9 +64,6 @@ const images = [
   },
 ];
 
-// Change code below this line
-
-// Change code below this line
 const galleryList = document.querySelector(".gallery");
 const markup = images
   .map((ele) => {
@@ -83,20 +80,23 @@ const markup = images
   })
   .join("");
 galleryList.innerHTML = markup;
-galleryList.addEventListener("click", onClickListGallary);
-function onClickListGallary(e) {
+
+let currentInstance = null;
+
+galleryList.addEventListener("click", (e) => {
   e.preventDefault();
+  if (e.target.nodeName !== "IMG") return;
 
-  if (e.target.nodeName !== "IMG") {
-    return;
+  const largeImageURL = e.target.dataset.source;
+  currentInstance = basicLightbox.create(`
+    <img src="${largeImageURL}" width="800" height="600">
+  `);
+
+  currentInstance.show();
+});
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && currentInstance !== null) {
+    currentInstance.close();
   }
-
-  const imageUrl = e.target.dataset.source;
-
-  const lightbox = basicLightbox.create(`<img src="${imageUrl}" alt=""/>`, {
-    captionsData: "alt",
-    captionDelay: 250,
-  });
-
-  lightbox.show();
-}
+});
