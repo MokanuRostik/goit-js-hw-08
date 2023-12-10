@@ -65,6 +65,7 @@ const images = [
 ];
 
 const galleryList = document.querySelector(".gallery");
+
 const markup = images
   .map((ele) => {
     return `<li class="gallery-item">
@@ -80,23 +81,34 @@ const markup = images
   })
   .join("");
 galleryList.innerHTML = markup;
-
-let currentInstance = null;
-
 galleryList.addEventListener("click", (e) => {
   e.preventDefault();
-  if (e.target.nodeName !== "IMG") return;
-
+  if (e.target.nodeName !== "IMG") {
+    return;
+  }
   const largeImageURL = e.target.dataset.source;
-  currentInstance = basicLightbox.create(`
-    <img src="${largeImageURL}" width="800" height="600">
-  `);
+  console.log(largeImageURL);
 
-  currentInstance.show();
-});
+  const instance = basicLightbox.create(
+    `
+    <img src="${largeImageURL}">
+`,
+    {
+      onClose: (instance) => {
+        // Code to execute when the lightbox is closed
+        console.log("Lightbox is closed");
+        document.removeEventListener("keydown", onKeyDown);
+      },
+    }
+  );
 
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && currentInstance !== null) {
-    currentInstance.close();
+  instance.show();
+  const visible = instance.visible();
+  document.addEventListener("keydown", onKeyDown);
+  function onKeyDown(e) {
+    e.preventDefault();
+    if (e.key === "Escape") {
+      instance.close(); // Закрываем lightbox при нажатии Escape
+    }
   }
 });
