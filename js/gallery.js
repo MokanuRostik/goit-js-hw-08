@@ -87,13 +87,18 @@ galleryList.addEventListener("click", (e) => {
     return;
   }
   const largeImageURL = e.target.dataset.source;
-  console.log(largeImageURL);
 
   const instance = basicLightbox.create(
     `
     <img src="${largeImageURL}">
 `,
     {
+      onShow: (instance) => {
+        // Code to execute when the lightbox is shown
+        console.log("Lightbox is shown");
+        document.addEventListener("keydown", onKeyDown);
+      },
+
       onClose: (instance) => {
         // Code to execute when the lightbox is closed
         console.log("Lightbox is closed");
@@ -103,10 +108,9 @@ galleryList.addEventListener("click", (e) => {
   );
 
   instance.show();
-  const visible = instance.visible();
+
   document.addEventListener("keydown", onKeyDown);
   function onKeyDown(e) {
-    e.preventDefault();
     if (e.key === "Escape") {
       instance.close(); // Закрываем lightbox при нажатии Escape
     }
